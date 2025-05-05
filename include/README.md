@@ -1,12 +1,14 @@
+# Project Header Files
 
 This directory is intended for project header files.
 
 A header file is a file containing C declarations and macro definitions
 to be shared between several project source files. You request the use of a
 header file in your project source file (C, C++, etc) located in `src` folder
-by including it, with the C preprocessing directive `#include'.
+by including it, with the C preprocessing directive `#include`.
 
-```src/main.c
+```c
+// src/main.c
 
 #include "header.h"
 
@@ -25,7 +27,7 @@ new version when next recompiled. The header file eliminates the labor of
 finding and changing all the copies as well as the risk that a failure to
 find one copy will result in inconsistencies within a program.
 
-In C, the convention is to give header files names that end with `.h'.
+In C, the convention is to give header files names that end with `.h`.
 
 Read more about using header files in official GCC documentation:
 
@@ -34,4 +36,4 @@ Read more about using header files in official GCC documentation:
 * Once-Only Headers
 * Computed Includes
 
-https://gcc.gnu.org/onlinedocs/cpp/Header-Files.html
+[GCC Documentation on Header Files](https://gcc.gnu.org/onlinedocs/cpp/Header-Files.html)
