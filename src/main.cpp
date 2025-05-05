@@ -21,28 +21,63 @@ volatile uint8_t rx_timeout = 0;
 
 void uart_init()
 {
-  // Correct register names for ATmega328P
-  UBRR0H = (MYUBRR >> 8);
-  UBRR0L = MYUBRR;
+  // Clear registers first for a clean initialization
+  UCSR0A = 0;
+  UCSR0B = 0;
+  UCSR0C = 0;
+
+  // Set baud rate
+  UBRR0H = (uint8_t)(MYUBRR >> 8);
+  UBRR0L = (uint8_t)MYUBRR;
+
+  // Enable transmitter, receiver and RX interrupt
   UCSR0B = (1 << TXEN0) | (1 << RXEN0) | (1 << RXCIE0);
-  UCSR0C = (1 << UCSZ01) | (1 << UCSZ00); // 8-bit data (no URSEL bit in ATmega328P)
+
+  // Set frame format: 8 data bits, 1 stop bit, no parity
+  UCSR0C = (1 << UCSZ01) | (1 << UCSZ00);
 }
 
 void timer1_init()
 {
-  TCCR1B |= (1 << WGM12);              // CTC mode
-  OCR1A = 15624;                       // 1s delay with 16MHz and prescaler 1024
-  TIMSK1 |= (1 << OCIE1A);             // Enable Timer1 compare interrupt (corrected register)
-  TCCR1B |= (1 << CS12) | (1 << CS10); // Prescaler 1024
+  // Clear registers first
+  TCCR1A = 0;
+  TCCR1B = 0;
+  TIMSK1 = 0;
+  TCNT1 = 0; // Reset counter
+
+  // Set CTC mode
+  TCCR1B = (1 << WGM12);
+
+  // Set compare match register for 1s delay with 16MHz clock and 1024 prescaler
+  OCR1A = 15624;
+
+  // Enable Timer1 compare interrupt
+  TIMSK1 = (1 << OCIE1A);
+
+  // Set prescaler 1024 and start timer
+  TCCR1B |= (1 << CS12) | (1 << CS10);
 }
 
 // Timer0 for RX timeout detection
 void timer0_init()
 {
-  TCCR0A |= (1 << WGM01);              // CTC mode (corrected register)
-  OCR0A = 250;                         // ~16ms at 16MHz/1024 (corrected register)
-  TIMSK0 |= (1 << OCIE0A);             // Enable Timer0 compare interrupt (corrected register)
-  TCCR0B |= (1 << CS02) | (1 << CS00); // Prescaler 1024 (corrected register)
+  // Clear registers first
+  TCCR0A = 0;
+  TCCR0B = 0;
+  TIMSK0 = 0;
+  TCNT0 = 0; // Reset counter
+
+  // Set CTC mode
+  TCCR0A = (1 << WGM01);
+
+  // Set compare match register for ~16ms at 16MHz with 1024 prescaler
+  OCR0A = 250;
+
+  // Enable Timer0 compare interrupt
+  TIMSK0 = (1 << OCIE0A);
+
+  // Set prescaler 1024 and start timer
+  TCCR0B = (1 << CS02) | (1 << CS00);
 }
 
 ISR(USART_RX_vect)
